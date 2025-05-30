@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Mercante di Babilonia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #d4af37, #b8860b, #cd853f);
+            min-height: 100vh;
+            color: #2c1810;
+        }
+
+        .game-container {
+            max-width: 1000px; /* Ridotto da 1200px */
+            margin: 0 auto;
+            padding: 10px; /* Ridotto da 20px */
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 10px; /* Ridotto da 20px */
+            margin-bottom: 10px; /* Ridotto da 20px */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 2.5em;
+            color: #8b4513;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .game-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px; /* Ridotto da 15px */
+            margin-top: 10px; /* Ridotto da 15px */
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 10px; /* Ridotto da 15px */
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid #b8860b;
+        }
+
+        .stat-value {
+            font-size: 1.5em; /* Ridotto da 1.8em */
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #654321;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .market-section, .inventory-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.events-section {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.market-item {
+    background: linear-gradient(135deg, #fff8dc, #f5f5dc);
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.goods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 8px;
+}
+
+.good-item {
+    display: flex;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #d4af37;
+}
+
+.good-details {
+    flex: 1;
+}
+
+.good-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+        .section-title {
+            font-size: 1.3em; /* Ridotto da 1.5em */
+            color: #8b4513;
+            margin-bottom: 10px; /* Ridotto da 15px */
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 5px; /* Ridotto da 10px */
+        }
+
+        .goods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 8px;
+        }
+
+        .good-item {
+            display: flex;
+            justify-content: space-between;
+        .good-details {
+            flex: 1;
+        }
+
+        .good-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .quantity-input {
+            width: 50px;
+            padding: 4px;
+            border: 1px solid #d4af37;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-buy {
+            background: linear-gradient(135deg, #228b22, #32cd32);
+            color: white;
+        }
+
+        .btn-sell {
+            background: linear-gradient(135deg, #dc143c, #ff6347);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .events-section {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px; /* Ridotto da 20px */
+            margin-top: 10px; /* Ridotto da 20px */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .event-log {
+            max-height: 120px; /* Ridotto da 150px */
+            overflow-y: auto;
+            background: #f5f5dc;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .event-item {
+            margin-bottom: 8px;
+            padding: 5px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 4px;
+            border-left: 3px solid #b8860b;
+        }
+
+        .next-month-btn {
+            background: linear-gradient(135deg, #4169e1, #6495ed);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .next-month-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .price-indicator {
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .price-up { color: #dc143c; }
+        .price-down { color: #228b22; }
+        .price-stable { color: #666; }
+
+        .caravan-section {
+            background: #f5f5dc;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            padding: 10px; /* Ridotto da 15px */
+        }
+
+        .caravan-card {
+            background: linear-gradient(135deg, #fff8dc, #f0e68c);
+            padding: 10px; /* Ridotto da 15px */
+            border-radius: 8px;
+            border: 2px solid #daa520;
+            text-align: center;
+        }
+
+        .caravan-card h3 {
+            color: #8b4513;
+            margin-bottom: 10px;
+        }
+
+        .caravan-card p {
+            margin: 5px 0;
+            color: #654321;
+        }
+
+        .caravan-item {
+            background: rgba(212, 175, 55, 0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 4px solid #b8860b;
+        }
+
+        .game-paused {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-stats {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+            }
+
+            .stat-card {
+                padding: 5px;
+            }
+
+            .stat-value {
+                font-size: 1.2em;
+            }
+        }
+
+        .game-controls {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.game-controls button {
+    padding: 8px 16px;
+    border: 2px solid #d4af37;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 150px;
+}
+
+.game-controls button:hover {
+    background: #d4af37;
+    color: white;
+}
+
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.tab {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 1px solid #d4af37;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab:hover {
+    background: #d4af37;
+    color: white;
+}
+
+.tab.active {
+    background: #d4af37;
+    color: white;
+    font-weight: bold;
+}
+
+.buildings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.building-card {
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.building-card h3 {
+    font-size: 1.1em;
+    margin: 0;
+    color: #8b4513;
+}
+
+.building-info {
+    margin: 0;
+    font-size: 0.85em;
+    color: #666;
+    flex-grow: 1;
+}
+
+.building-count {
+    font-weight: bold;
+    color: #8b4513;
+    font-size: 1em;
+    margin: 0;
+}
+
+.building-card button {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 0.9em;
+}
+
+.building-card button:disabled {
+    background: #ccc;
+    border-color: #999;
+    cursor: not-allowed;
+}
+
+/* Nuove regole per la sezione Banca */
+.bank-section {
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+}
+
+.loan-info {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #8b4513;
+}
+
+.loan-controls {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.loan-action {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.loan-action input {
+    width: 100px;
+    padding: 5px;
+    border: 1px solid #d4af37;
+    border-radius: 4px;
+}
+
+/* Nuove regole per le guardie */
+.guards-info {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: #8b4513;
+}
+
+.guards-controls {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.hire-guard, .fire-guard {
+    padding: 8px 16px;
+    border: 2px solid #d4af37;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 120px;
+    text-align: center;
+}
+
+.hire-guard:hover, .fire-guard:hover {
+    background: #d4af37;
+    color: white;
+}
+
+.stats-container {
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 2px solid #d4af37;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-box {
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.stat-box h3 {
+    color: #8b4513;
+    font-size: 1em;
+    margin-bottom: 5px;
+}
+
+.scrollable-list {
+    max-height: 150px;
+    overflow-y: auto;
+    background: white;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.route-map {
+    margin-top: 15px;
+}
+
+.route {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+}
+
+.city {
+    font-weight: bold;
+    color: #8b4513;
+}
+
+.route-line {
+    flex: 1;
+    color: #d4af37;
+    text-align: center;
+}
+
+.route-stats {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Aggiungere allo <style> esistente */
+.difficulty-select {
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 2px solid #d4af37;
+    border-radius: 15px;
+    max-width: 800px;
+    width: 90%;
+    text-align: center;
+}
+
+.difficulty-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+    padding: 20px;
+}
+
+.difficulty-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #d4af37;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #fff8dc, #f0e68c);
+}
+
+.game-container > *:not(#difficulty-select):not(.header) {
+    display: none;
+}
+
+.game-started .main-content,
+.game-started .game-stats,
+.game-started .events-section,
+.game-started .management-sections {
+    display: block !important;
+}
+
+.management-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.section-card {
+    background: linear-gradient(135deg, #f5f5dc, #e6e6cc);
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #8b4513;
+}
+
+.controls-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.control-group {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.control-group input {
+    width: 70px;
+    padding: 4px;
+    border: 1px solid #d4af37;
+    border-radius: 4px;
+}
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="game-title">🏛️ Il Mercante di Babilonia 🏛️</h1>
+            <!-- Modificare la sezione game-stats -->
+<div class="game-stats">
+    <div class="stat-card">
+        <div class="stat-value" id="gold">1000</div>
+        <div class="stat-label">💰 Sicli d'Oro</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">Lvl <span id="level">1</span></div>
+        <div class="stat-label">📊 Livello</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value"><span id="exp">0</span> XP</div>
+        <div class="stat-label">✨ Esperienza</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="month">1</div>
+        <div class="stat-label">📅 Mese</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="year">1750</div>
+        <div class="stat-label">🏛️ Anno (a.C.)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="reputation">50</div>
+        <div class="stat-label">⭐ Reputazione</div>
+    </div>
+</div>
+        </div>
+
+        <div id="difficulty-select" class="difficulty-select">
+    <h2 class="section-title">🎮 Seleziona Difficoltà</h2>
+    <div class="difficulty-options">
+        <div class="difficulty-card" onclick="startNewGame('facile')">
+            <h3>👶 Principiante</h3>
+            <p>Oro iniziale: 2000 sicli</p>
+            <p>Prezzi ridotti del 10%</p>
+            <p>Rischi ridotti del 20%</p>
+            <p>Interessi più bassi: 8%</p>
+        </div>
+        <div class="difficulty-card" onclick="startNewGame('normale')">
+            <h3>👨‍💼 Mercante</h3>
+            <p>Oro iniziale: 1000 sicli</p>
+            <p>Prezzi normali</p>
+            <p>Rischi normali</p>
+            <p>Interessi: 10%</p>
+        </div>
+        <div class="difficulty-card" onclick="startNewGame('difficile')">
+            <h3>🎭 Sopravvivenza</h3>
+            <p>Oro iniziale: 500 sicli</p>
+            <p>Prezzi aumentati del 20%</p>
+            <p>Rischi aumentati del 20%</p>
+            <p>Interessi più alti: 12%</p>
+        </div>
+    </div>
+</div>
+
+        <div class="main-content">
+    <div class="market-section">
+        <h2 class="section-title">🏪 Mercato di Babilonia</h2>
+        <div class="market-grid" id="market-goods">
+            <!-- Contenuto generato da JavaScript -->
+        </div>
+    </div>
+
+    <div class="inventory-section">
+        <h2 class="section-title">📦 Il Tuo Magazzino</h2>
+        <div class="goods-grid" id="inventory-goods">
+            <!-- Contenuto generato da JavaScript -->
+        </div>
+    </div>
+</div>
+
+        <!-- Cronache sotto al mercato e magazzino -->
+        <div class="events-section">
+            <h2 class="section-title">📜 Cronache del Regno</h2>
+            <div class="event-log" id="event-log">
+                <div class="event-item">Benvenuto a Babilonia, mercante! La tua avventura commerciale inizia ora...</div>
+            </div>
+        </div>
+
+        <!-- Centro Carovane alla fine -->
+        <div class="events-section">
+            <h2 class="section-title">🐪 Centro Caravane</h2>
+            <div class="caravan-section" id="caravan-section">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                    <div class="caravan-card">
+                        <h3>🏜️ Rotta dell'Assiria</h3>
+                        <p>Distanza: 3 mesi • Rischio: Medio</p>
+                        <p>Domanda alta: Seta, Spezie</p>
+                        <button class="btn btn-buy" onclick="sendCaravan('assiria')">Invia Caravana (500 sicli)</button>
+                    </div>
+                    <div class="caravan-card">
+                        <h3>🌊 Rotta Fenicia</h3>
+                        <p>Distanza: 2 mesi • Rischio: Basso</p>
+                        <p>Domanda alta: Cedro, Oro</p>
+                        <button class="btn btn-buy" onclick="sendCaravan('fenicia')">Invia Caravana (300 sicli)</button>
+                    </div>
+                    <div class="caravan-card">
+                        <h3>🏔️ Rotta Persiana</h3>
+                        <p>Distanza: 4 mesi • Rischio: Alto</p>
+                        <p>Domanda alta: Incenso, Grano</p>
+                        <button class="btn btn-buy" onclick="sendCaravan('persia')">Invia Caravana (800 sicli)</button>
+                    </div>
+                </div>
+                <div class="active-caravans" id="active-caravans" style="margin-top: 20px;">
+                    <h4>📋 Caravane in Viaggio:</h4>
+                    <div id="caravan-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="events-section">
+    <h2 class="section-title">🏗️ Costruzioni</h2>
+    <div class="buildings-grid" id="buildings-container">
+        <!-- Verrà popolato da JavaScript -->
+    </div>
+</div>
+
+<!-- Sostituire solo la sezione della Banca e Caserma con questo layout -->
+<div class="management-sections">
+    <div class="section-card">
+        <h2 class="section-title">🏦 Banca di Babilonia</h2>
+        <div class="info-row">
+            <p>Prestito: <span id="current-loan">0</span> sicli</p>
+            <p>Interesse: <span id="interest-rate">10</span>%</p>
+            <p>Max: <span id="max-loan">1000</span> sicli</p>
+        </div>
+        <div class="controls-row">
+            <div class="control-group">
+                <input type="number" id="loan-amount" min="100" step="100" value="1000">
+                <button class="btn btn-buy" onclick="takeLoan()">🏦 Prestito</button>
+            </div>
+            <div class="control-group">
+                <input type="number" id="repay-amount" min="100" step="100" value="100">
+                <button class="btn btn-sell" onclick="repayLoan()">💰 Ripaga</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <h2 class="section-title">💂‍♂️ Caserma delle Guardie</h2>
+        <div class="info-row">
+            <p>Guardie: <span id="hired-guards">0</span>/<span id="max-guards">5</span></p>
+            <p>Costo: <span id="hire-cost">300</span> sicli</p>
+            <p>Stipendio: <span id="monthly-cost">50</span> sicli</p>
+        </div>
+        <div class="controls-row">
+            <button class="btn btn-buy" onclick="hireGuard()">💂‍♂️ Assumi</button>
+            <button class="btn btn-sell" onclick="fireGuard()">🚫 Licenzia</button>
+        </div>
+    </div>
+</div>
+
+        <div class="events-section">
+    <h2 class="section-title">📊 Statistiche Commerciali</h2>
+    <div class="stats-container">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>💰 Profitto Totale</h3>
+                <p id="total-profit">0 sicli</p>
+            </div>
+            <div class="stat-box">
+                <h3>🌟 Miglior Scambio</h3>
+                <p id="best-trade">-</p>
+            </div>
+            <div class="stat-box">
+                <h3>🐪 Carovane</h3>
+                <p id="caravan-stats">0/0 (0%)</p>
+            </div>
+        </div>
+        
+        <div class="trade-history">
+            <h3>📜 Ultime Transazioni</h3>
+            <div id="transactions-list" class="scrollable-list"></div>
+        </div>
+        
+        <div class="trade-routes">
+            <h3>🗺️ Rotte Commerciali</h3>
+            <div class="route-map">
+                <div class="route" data-route="assiria">
+                    <span class="city">Babilonia</span>
+                    <span class="route-line">➔➔➔</span>
+                    <span class="city">Assiria</span>
+                    <span class="route-stats"></span>
+                </div>
+                <div class="route" data-route="fenicia">
+                    <span class="city">Babilonia</span>
+                    <span class="route-line">➔➔</span>
+                    <span class="city">Fenicia</span>
+                    <span class="route-stats"></span>
+                </div>
+                <div class="route" data-route="persia">
+                    <span class="city">Babilonia</span>
+                    <span class="route-line">➔➔➔➔</span>
+                    <span class="city">Persia</span>
+                    <span class="route-stats"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="game-controls">
+    <button class="btn" id="gameControlBtn" onclick="toggleGame()">
+        🎮 Avvia il Gioco
+    </button>
+    <button class="btn" onclick="saveGame()">
+        💾 Salva Gioco
+    </button>
+    <button class="btn" onclick="loadGame()">
+        📂 Carica Gioco
+    </button>
+    <div style="color: #8b4513; text-align: center; margin-top: 5px;" id="gameStatus">
+        Gioco in pausa - Clicca per iniziare!
+    </div>
+</div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            gold: 1000,
+            level: 1,
+            experience: 0,  // Aggiungere questa riga
+            month: 1,
+            year: 1750,
+            reputation: 50,
+            inventory: {},
+            eventLog: [],
+            caravans: [],
+            isRunning: false,
+            gameInterval: null,
+            warehouseCapacity: 500,
+            currentStorage: 0,
+            loan: 0,
+            interestRate: 0.1,
+            buildings: {
+                magazzino: 0,
+                bottega: 0,
+                caravanserraglio: 0,
+                tempio: 0
+            },
+            statistics: {
+                totalProfit: 0,
+                bestTrade: { item: null, profit: 0 },
+                totalCaravans: 0,
+                successfulCaravans: 0,
+                tradeHistory: [],
+                mostProfitableRoute: { route: null, profit: 0 }
+            }
+        };
+
+        const guards = {
+    hired: 0,           // guardie attuali
+    maxGuards: 5,       // numero massimo di guardie
+    hireCost: 300,      // costo di assunzione
+    monthlyCost: 50,    // costo mensile per guardia
+    protection: 0.1     // riduzione rischio del 10% per guardia
+};
+
+const reputationSystem = {
+    levels: {
+        pessimo: { min: 0, max: 20, priceModifier: 1.2, loanInterest: 0.15 },
+        scarso: { min: 21, max: 40, priceModifier: 1.1, loanInterest: 0.12 },
+        neutro: { min: 41, max: 60, priceModifier: 1.0, loanInterest: 0.1 },
+        buono: { min: 61, max: 80, priceModifier: 0.9, loanInterest: 0.08 },
+        ottimo: { min: 81, max: 100, priceModifier: 0.8, loanInterest: 0.05 }
+    },
+    getCurrentLevel: (reputation) => {
+        for (const [level, range] of Object.entries(reputationSystem.levels)) {
+            if (reputation >= range.min && reputation <= range.max) {
+                return level;
+            }
+        }
+        return 'neutro';
+    },
+    getPriceModifier: (reputation) => {
+        const level = reputationSystem.getCurrentLevel(reputation);
+        return reputationSystem.levels[level].priceModifier;
+    },
+    getLoanInterest: (reputation) => {
+        const level = reputationSystem.getCurrentLevel(reputation);
+        return reputationSystem.levels[level].loanInterest;
+    }
+};
+
+// 1. Correggere la dichiarazione degli achievements
+const achievements = {
+    riccoMercante: { name: "Ricco Mercante", condition: (state) => state.gold >= 5000, achieved: false },
+    grandeCarovaniere: { name: "Grande Carovaniere", condition: (state) => state.caravans.length >= 3, achieved: false },
+    maestroDelCommercio: { name: "Maestro del Commercio", condition: (state) => state.reputation >= 100, achieved: false }
+};
+
+// Modificare la definizione dei beni commerciabili
+const marketGoods = {
+    grano: { 
+        name: "🌾 Grano", 
+        basePrice: 10, 
+        volatility: 0.3, 
+        currentPrice: 10, 
+        quantity: 100,
+        description: "Risorsa base per l'alimentazione",
+        category: "agricolo"
+    },
+    datteri: { 
+        name: "🌴 Datteri", 
+        basePrice: 15, 
+        volatility: 0.3, 
+        currentPrice: 15, 
+        quantity: 80,
+        description: "Frutto tipico mesopotamico",
+        category: "agricolo"
+    },
+    lana: { 
+        name: "🧶 Lana", 
+        basePrice: 30, 
+        volatility: 0.4, 
+        currentPrice: 30, 
+        quantity: 50,
+        description: "Tessuto pregiato babilonese",
+        category: "tessile"
+    },
+    olio: { 
+        name: "🫒 Olio", 
+        basePrice: 25, 
+        volatility: 0.3, 
+        currentPrice: 25, 
+        quantity: 60,
+        description: "Per lampade e cosmesi",
+        category: "agricolo"
+    },
+    cedro: { 
+        name: "🌲 Legno di Cedro", 
+        basePrice: 45, 
+        volatility: 0.4, 
+        currentPrice: 45, 
+        quantity: 25,
+        description: "Legno pregiato dal Libano",
+        category: "materiali"
+    },
+    argento: { 
+        name: "⚪ Argento", 
+        basePrice: 150, 
+        volatility: 0.5, 
+        currentPrice: 150, 
+        quantity: 10,
+        description: "Metallo prezioso per gioielli",
+        category: "lusso"
+    },
+    lapislazzuli: { 
+        name: "💠 Lapislazzuli", 
+        basePrice: 200, 
+        volatility: 0.6, 
+        currentPrice: 200, 
+        quantity: 5,
+        description: "Pietra preziosa dall'Afghanistan",
+        category: "lusso"
+    },
+    incenso: { 
+        name: "🕯️ Incenso", 
+        basePrice: 40, 
+        volatility: 0.4, 
+        currentPrice: 40, 
+        quantity: 30,
+        description: "Resina aromatica per rituali",
+        category: "lusso"
+    }
+};
+
+// Aggiornare gli eventi correlati
+const randomEvents = [
+            {
+                name: "Caravana dall'Oriente",
+                description: "Una ricca caravana porta nuove merci dall'Oriente",
+                effects: { spezie: -0.3, seta: -0.2 }
+            },
+            {
+                name: "Siccità nelle Terre del Nord",
+                description: "La siccità danneggia i raccolti",
+                effects: { grano: 0.4, incenso: 0.2 }
+            },
+            {
+                name: "Festival del Re",
+                description: "I festeggiamenti reali aumentano la domanda di beni di lusso",
+                effects: { oro: 0.5, incenso: 0.3, seta: 0.2 }
+            },
+            {
+                name: "Guerra con l'Assiria",
+                description: "Il conflitto interrompe le rotte commerciali",
+                effects: { seta: 0.3, spezie: 0.4, cedro: 0.2 }
+            },
+            {
+                name: "Buon Raccolto",
+                description: "L'abbondanza porta prezzi bassi per i beni di agricoli",
+                effects: { grano: -0.2, incenso: -0.1 }
+            },
+            {
+                name: "Mercanti Fenici in Città",
+                description: "La concorrenza feroce abbassa alcuni prezzi",
+                effects: { oro: -0.2, cedro: -0.3 }
+            }
+        ];
+
+// Aggiornare anche le rotte commerciali
+const caravanRoutes = {
+    assiria: {
+        name: "Assiria",
+        distance: 3,
+        cost: 500,
+        risk: 0.2,
+        multipliers: { 
+            lana: 1.8, 
+            cedro: 2.0, 
+            grano: 1.3, 
+            argento: 1.4 
+        }
+    },
+    fenicia: {
+        name: "Fenicia", 
+        distance: 2,
+        cost: 300,
+        risk: 0.1,
+        multipliers: { 
+            cedro: 2.2, 
+            argento: 1.9, 
+            incenso: 1.6, 
+            olio: 1.4 
+        }
+    },
+    persia: {
+        name: "Persia",
+        distance: 4,
+        cost: 800,
+        risk: 0.3,
+        multipliers: { 
+            lapislazzuli: 2.5, 
+            incenso: 2.0, 
+            grano: 1.7, 
+            datteri: 1.4 
+        }
+    }
+};
+
+        function saveGame() {
+            const saveData = JSON.stringify(gameState);
+            localStorage.setItem('babylonMerchantSave', saveData);
+            addEvent("💾 Gioco salvato!");
+        }
+
+        function loadGame() {
+            const saveData = localStorage.getItem('babylonMerchantSave');
+            if (saveData) {
+                gameState = JSON.parse(saveData);
+                addEvent("📂 Gioco caricato!");
+                updateDisplay();
+            }
+        }
+
+        // Salva automaticamente ogni 5 minuti
+        setInterval(saveGame, 300000);
+
+        function updateDisplay() {
+    // Update basic stats
+    ['gold', 'level', 'exp', 'month', 'year', 'reputation'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = Math.floor(gameState[id]);
+    });
+
+    // Update market and inventory if visible
+    if (!document.querySelector('.main-content').classList.contains('game-paused')) {
+        updateMarketDisplay();
+        updateInventoryDisplay();
+        updateCaravanDisplay();
+    }
+}
+
+        function checkAchievements() {
+    for (const [key, achievement] of Object.entries(achievements)) {
+        if (!achievement.achieved && achievement.condition(gameState)) {
+            achievement.achieved = true;
+            addEvent(`🏆 Obiettivo Sbloccato: ${achievement.name}!`);
+        }
+    }
+}
+
+        function updateMarketDisplay() {
+    const container = document.getElementById('market-goods');
+    const fragment = document.createDocumentFragment();
+
+    Object.entries(marketGoods).forEach(([key, good]) => {
+        const priceChange = (good.currentPrice - good.basePrice) / good.basePrice;
+        const { trendClass, trendIcon } = getPriceTrend(priceChange);
+        
+        const div = document.createElement('div');
+        div.className = 'market-item';
+        div.innerHTML = createMarketItemHTML(key, good, trendClass, trendIcon);
+        fragment.appendChild(div);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(fragment);
+}
+
+function getPriceTrend(priceChange) {
+    if (priceChange > 0.05) return { trendClass: 'trend-up', trendIcon: '📈' };
+    if (priceChange < -0.05) return { trendClass: 'trend-down', trendIcon: '📉' };
+    return { trendClass: 'trend-stable', trendIcon: '➡️' };
+}
+
+function createMarketItemHTML(key, good, trendClass, trendIcon) {
+    return `
+        <div class="market-item-header">
+            <span class="market-item-name">${good.name}</span>
+            <div class="market-item-price">
+                <span>${Math.floor(good.currentPrice)} 💰</span>
+                <span class="price-trend ${trendClass}">${trendIcon}</span>
+            </div>
+        </div>
+        <div class="market-item-stock">
+            Disponibilità: ${good.quantity} unità
+        </div>
+        <div class="market-item-controls">
+            <div class="quantity-control">
+                <button class="quantity-btn" onclick="decrementQuantity('${key}')">-</button>
+                <input type="number" id="buy-${key}" class="quantity-input" 
+                       value="1" min="1" max="${good.quantity}">
+                <button class="quantity-btn" onclick="incrementQuantity('${key}')">+</button>
+            </div>
+            <button class="buy-btn" onclick="buyGood('${key}')">Compra</button>
+        </div>
+    `;
+}
+        // 2. Correggere updateInventoryDisplay()
+        function updateInventoryDisplay() {
+            const container = document.getElementById('inventory-goods');
+            container.innerHTML = '';
+
+            if (Object.keys(gameState.inventory).length === 0) {
+                container.innerHTML = '<div class="good-item">Il tuo magazzino è vuoto</div>';
+                return;
+            }
+
+            for (const [key, quantity] of Object.entries(gameState.inventory)) {
+                if (quantity > 0) {
+                    const good = marketGoods[key];
+                    const div = document.createElement('div');
+                    div.className = 'good-item';
+                    
+                    div.innerHTML = `
+                <div class="good-info">
+                    <span class="good-name">${good.name}</span>
+                    <div class="good-details">
+                        <span class="good-price">
+                            ${Math.floor(good.currentPrice)} 💰
+                        </span>
+                        <small>(${quantity} posseduti)</small>
+                    </div>
+                </div>
+                <div class="good-controls">
+                    <input type="number" class="quantity-input" id="sell-${key}" min="1" max="${quantity}" value="1">
+                    <button class="btn btn-sell" onclick="sellGood('${key}')">Vendi</button>
+                </div>
+            `;
+                    container.appendChild(div);
+                }
+            }
+        }
+
+        function buyGood(goodKey) {
+            const good = marketGoods[goodKey];
+            const quantity = parseInt(document.getElementById(`buy-${goodKey}`).value) || 1;
+            const priceModifier = reputationSystem.getPriceModifier(gameState.reputation);
+            const totalCost = good.currentPrice * quantity * priceModifier;
+
+            const validationError = validatePurchase(good, quantity, totalCost);
+            if (validationError) {
+                addEvent(`❌ ${validationError}`);
+                return;
+            }
+
+            executeTransaction('buy', good, goodKey, quantity, totalCost);
+        }
+
+function validatePurchase(good, quantity, totalCost) {
+    if (totalCost > gameState.gold) return "Non hai abbastanza oro per questo acquisto!";
+    if (quantity > good.quantity) return "Non ci sono abbastanza merci disponibili!";
+    if (gameState.currentStorage + quantity > gameState.warehouseCapacity) return "Magazzino pieno!";
+    return null;
+}
+
+function executeTransaction(type, good, goodKey, quantity, amount) {
+    if (type === 'buy') {
+        gameState.gold -= amount;
+        good.quantity -= quantity;
+        gameState.inventory[goodKey] = (gameState.inventory[goodKey] || 0) + quantity;
+        gameState.currentStorage += quantity;
+        addEvent(`✅ Hai comprato ${quantity}x ${good.name} per ${Math.floor(amount)} sicli`);
+    } else {
+        gameState.gold += amount;
+        good.quantity += quantity;
+        gameState.inventory[goodKey] -= quantity;
+        if (gameState.inventory[goodKey] <= 0) delete gameState.inventory[goodKey];
+        addEvent(`💰 Hai venduto ${quantity}x ${good.name} per ${Math.floor(amount)} sicli`);
+    }
+    
+    updateDisplay();
+}
+
+        function sellGood(goodKey) {
+            const quantity = parseInt(document.getElementById(`sell-${goodKey}`).value) || 1;
+            const good = marketGoods[goodKey];
+            const inventoryQuantity = gameState.inventory[goodKey] || 0;
+
+            if (quantity > inventoryQuantity) {
+                addEvent("❌ Non hai abbastanza merci da vendere!");
+                return;
+            }
+
+            const totalEarnings = good.currentPrice * quantity;
+            const profit = totalEarnings - (good.basePrice * quantity);
+            
+            gameState.gold += totalEarnings;
+            good.quantity += quantity;
+            gameState.inventory[goodKey] -= quantity;
+
+            if (gameState.inventory[goodKey] <= 0) {
+                delete gameState.inventory[goodKey];
+            }
+
+            addEvent(`💰 Hai venduto ${quantity}x ${good.name} per ${Math.floor(totalEarnings)} sicli`);
+            
+            updateStatistics({
+                type: "Vendita",
+                item: good.name,
+                quantity: quantity,
+                profit: profit
+            });
+            
+            updateDisplay();
+        }
+
+        function addEvent(message, type = 'info') {
+    const eventLog = document.getElementById('event-log');
+    const eventItem = document.createElement('div');
+    eventItem.className = `event-item event-${type}`;
+    eventItem.textContent = `${gameState.month}/${gameState.year} a.C.: ${message}`;
+    eventLog.insertBefore(eventItem, eventLog.firstChild);
+}
+
+        function updatePrices() {
+            for (const [key, good] of Object.entries(marketGoods)) {
+                // Natural price fluctuation
+                const change = (Math.random() - 0.5) * good.volatility * 0.4;
+                good.currentPrice *= (1 + change);
+                
+                // Keep prices within reasonable bounds
+                good.currentPrice = Math.max(good.basePrice * 0.3, Math.min(good.basePrice * 3, good.currentPrice));
+            }
+        }
+
+        // Modifica la frequenza degli eventi (da 0.4 a 0.2 - 20% di probabilità)
+function triggerRandomEvent() {
+    if (Math.random() < 0.2) {
+        const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
+        
+        for (const [goodKey, effect] of Object.entries(event.effects)) {
+            if (marketGoods[goodKey]) {
+                marketGoods[goodKey].currentPrice *= (1 + effect);
+                marketGoods[goodKey].currentPrice = Math.max(
+                    marketGoods[goodKey].basePrice * 0.3,
+                    Math.min(marketGoods[goodKey].basePrice * 3, marketGoods[goodKey].currentPrice)
+                );
+            }
+        }
+        addEvent(`🎭 ${event.name}: ${event.description}`);
+    }
+}
+
+        function restockGoods() {
+            for (const [key, good] of Object.entries(marketGoods)) {
+                // Restock goods
+                const baseStock = key === 'grano' ? 100 : key === 'seta' ? 20 : key === 'spezie' ? 15 : 
+                                 key === 'oro' ? 5 : key === 'incenso' ? 40 : 30;
+                good.quantity = Math.min(good.quantity + Math.floor(baseStock * 0.3), baseStock);
+            }
+        }
+        function updateCaravanDisplay() {
+            const container = document.getElementById('caravan-list');
+            container.innerHTML = '';
+
+            if (gameState.caravans.length === 0) {
+                container.innerHTML = '<div class="caravan-item">Nessuna caravana in viaggio</div>';
+                return;
+            }
+
+            gameState.caravans.forEach(caravan => {
+                const div = document.createElement('div');
+                div.className = 'caravan-item';
+                const remainingMonths = caravan.arrivalMonth - gameState.month + (caravan.arrivalYear - gameState.year) * 12;
+                
+                let goodsList = Object.entries(caravan.goods)
+                    .filter(([_, qty]) => qty > 0)
+                    .map(([good, qty]) => `${qty}x ${marketGoods[good].name}`)
+                    .join(', ');
+
+                div.innerHTML = `
+                    🐪 Caravana verso ${caravan.destination} - Arriva tra ${remainingMonths} mesi<br>
+                    📦 Merci: ${goodsList}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function sendCaravan(routeKey) {
+            const route = caravanRoutes[routeKey];
+            
+            if (gameState.gold < route.cost) {
+                addEvent("❌ Non hai abbastanza oro per organizzare questa caravana!");
+                return;
+            }
+
+            // Check if player has goods to send
+            const hasGoods = Object.values(gameState.inventory).some(qty => qty > 0);
+            if (!hasGoods) {
+                addEvent("❌ Non hai merci da spedire! Compra qualcosa prima di organizzare una caravana.");
+                return;
+            }
+
+            // Deduct cost
+            gameState.gold -= route.cost;
+
+            // Calculate arrival time
+            let arrivalMonth = gameState.month + route.distance;
+            let arrivalYear = gameState.year;
+            while (arrivalMonth > 12) {
+                arrivalMonth -= 12;
+                arrivalYear++;
+            }
+
+            // Create caravan with current inventory
+            const caravan = {
+                destination: route.name,
+                goods: {...gameState.inventory},
+                arrivalMonth: arrivalMonth,
+                arrivalYear: arrivalYear,
+                route: routeKey
+            };
+
+            gameState.caravans.push(caravan);
+            gameState.inventory = {}; // Clear inventory (goods are now in transit)
+            
+            addEvent(`🐪 Caravana partita verso ${route.name}! Arriverà nel mese ${arrivalMonth} del ${arrivalYear} a.C.`);
+            updateDisplay();
+        }
+
+        function processArrivingCaravans() {
+            const currentCaravans = [...gameState.caravans];
+            gameState.caravans = [];
+
+            currentCaravans.forEach(caravan => {
+                if (caravan.arrivalYear === gameState.year && caravan.arrivalMonth === gameState.month) {
+                    const route = caravanRoutes[caravan.route];
+                    let totalEarnings = 0;
+                    let success = Math.random() > route.risk;
+
+                    if (success) {
+                        for (const [goodKey, quantity] of Object.entries(caravan.goods)) {
+                            if (quantity > 0) {
+                                const sellPrice = marketGoods[goodKey].basePrice * route.multipliers[goodKey];
+                                const earnings = sellPrice * quantity;
+                                totalEarnings += earnings;
+                            }
+                        }
+                        
+                        gameState.gold += totalEarnings;
+                        gameState.reputation += 5;
+                        
+                        updateStatistics({
+                            type: "caravan",
+                            item: route.name,
+                            profit: totalEarnings,
+                            success: true
+                        });
+                        
+                        addEvent(`✅ La caravana da ${route.name} è tornata con successo! Guadagno: ${Math.floor(totalEarnings)} sicli`);
+                    } else {
+                        gameState.reputation -= 10;
+                        
+                        updateStatistics({
+                            type: "caravan",
+                            item: route.name,
+                            profit: -route.cost,
+                            success: false
+                        });
+                        
+                        addEvent(`💀 La caravana verso ${route.name} è stata attaccata dai banditi! Merci perdute.`);
+                    }
+                } else {
+                    gameState.caravans.push(caravan);
+                }
+            });
+            
+            updateDisplay();
+        }
+
+        function toggleGame() {
+    const btn = document.getElementById('gameControlBtn');
+    const statusDiv = document.getElementById('gameStatus');
+
+    if (gameState.isRunning) {
+        // Metti in pausa
+        clearInterval(gameState.gameInterval);
+        gameState.isRunning = false;
+        btn.textContent = '🎮 Avvia Gioco';
+        statusDiv.textContent = 'Gioco in pausa';
+        document.querySelector('.main-content').classList.add('game-paused');
+    } else {
+        // Avvia
+        gameState.isRunning = true;
+        gameState.gameInterval = setInterval(nextMonth, 4000);
+        btn.textContent = '⏸️ Pausa';
+        statusDiv.textContent = 'Gioco in corso';
+        document.querySelector('.main-content').classList.remove('game-paused');
+    }
+    
+    updateDisplay();
+}
+
+        // 4. Correggere indentazione in nextMonth()
+        function nextMonth() {
+            processArrivingCaravans();
+            
+            gameState.month++;
+            if (gameState.month > 12) {
+                gameState.month = 1;
+                gameState.year--;
+                addEvent(`🎊 Anno nuovo! Siamo ora nel ${gameState.year} a.C.`);
+            }
+
+            updatePrices();
+            triggerRandomEvent();
+            restockGoods();
+    
+            if (gameState.reputation > 0 && gameState.month % 5 === 0) {
+        gameState.reputation = Math.max(0, gameState.reputation - 1);
+    }
+
+    if (gameState.loan > 0) {
+        const currentInterest = reputationSystem.getLoanInterest(gameState.reputation);
+        const interest = Math.ceil(gameState.loan * currentInterest);
+        gameState.gold -= interest;
+        addEvent(`📈 Hai pagato ${interest} sicli di interessi (tasso: ${(currentInterest*100).toFixed(1)}%)`);
+    }
+
+    // Rendite dagli edifici
+    let monthlyIncome = 0;
+    for (const [buildingType, amount] of Object.entries(gameState.buildings)) {
+        const building = buildings[buildingType];
+        if (building.income) {
+            monthlyIncome += building.income * amount;
+        }
+        if (building.reputationBonus) {
+            gameState.reputation += building.reputationBonus * amount;
+        }
+    }
+    
+    if (monthlyIncome > 0) {
+        gameState.gold += monthlyIncome;
+        addEvent(`💰 Hai ricevuto ${monthlyIncome} sicli dalle tue proprietà`);
+    }
+    
+    // Guadagno esperienza mensile
+    const monthlyExp = Math.floor(Math.random() * 50) + 50; // 50-100 XP al mese
+    gameState.experience += monthlyExp;
+    
+    // Level up check
+    const expNeeded = gameState.level * 1000;
+    if (gameState.experience >= expNeeded) {
+        gameState.level++;
+        gameState.experience -= expNeeded;
+        addEvent(`🎖️ Sei salito al livello ${gameState.level}!`);
+        gameState.warehouseCapacity += 50; // Bonus capacità magazzino per level up
+    }
+    
+    // Pagamento guardie
+    const guardCost = guards.hired * guards.monthlyCost;
+    if (guardCost > 0) {
+        gameState.gold -= guardCost;
+        addEvent(`💂‍♂️ Hai pagato ${guardCost} sicli per le guardie`);
+    }
+    
+    checkAchievements();
+    updateDisplay();
+}
+
+        function updateBuildingsDisplay() {
+    const container = document.getElementById('buildings-container');
+    container.innerHTML = '';
+    
+    for (const [buildingType, building] of Object.entries(buildings)) {
+        const owned = gameState.buildings[buildingType];
+        const div = document.createElement('div');
+        div.className = 'building-card';
+        
+        div.innerHTML = `
+            <h3>${building.name}</h3>
+            <p class="building-info">${building.description}</p>
+            <p class="building-count">${owned}/${building.maxAmount}</p>
+            <button class="btn btn-buy" 
+                    onclick="buildStructure('${buildingType}')"
+                    ${owned >= building.maxAmount ? 'disabled' : ''}>
+                🏗️ ${building.cost} 💰
+            </button>
+        `;
+        
+        container.appendChild(div);
+    }
+}
+
+// Aggiungere allo <script> esistente
+
+function takeLoan() {
+    const amount = parseInt(document.getElementById('loan-amount').value);
+    const maxLoan = gameState.level * 1000; // Prestito massimo basato sul livello
+    
+    if (gameState.loan + amount > maxLoan) {
+        addEvent("❌ Non puoi prendere in prestito così tanto! Aumenta il tuo livello.");
+        return;
+    }
+    
+    gameState.loan += amount;
+    gameState.gold += amount;
+    addEvent(`🏦 Hai preso in prestito ${amount} sicli dalla Banca di Babilonia`);
+    
+    // Reset del campo input
+    document.getElementById('loan-amount').value = Math.min(1000, maxLoan - gameState.loan);
+    
+    updateDisplay();
+}
+
+function repayLoan() {
+    const amount = parseInt(document.getElementById('repay-amount').value);
+    
+    if (amount > gameState.gold) {
+        addEvent("❌ Non hai abbastanza oro per ripagare questa somma!");
+        return;
+    }
+    
+    if (amount > gameState.loan) {
+        addEvent("❌ Stai cercando di ripagare più di quanto devi!");
+        return;
+    }
+    
+    gameState.loan -= amount;
+    gameState.gold -= amount;
+    gameState.reputation += 1; // Bonus reputazione per aver ripagato il debito
+    addEvent(`✅ Hai ripagato ${amount} sicli del tuo prestito`);
+    
+    // Reset del campo input
+    document.getElementById('repay-amount').value = Math.min(100, gameState.loan);
+    
+    updateDisplay();
+}
+
+// Aggiungere dopo la dichiarazione di gameState
+
+const difficultyLevels = {
+    facile: {
+        name: "👶 Principiante",
+        startingGold: 2000,
+        startingReputation: 60,
+        priceModifier: 0.9,    // prezzi più bassi del 10%
+        caravanRisk: 0.8,      // rischio carovane ridotto del 20%
+        loanInterest: 0.08,    // interessi più bassi
+        description: "Ideale per iniziare: più oro iniziale, prezzi migliori e meno rischi"
+    },
+    normale: {
+        name: "👨‍💼 Mercante",
+        startingGold: 1000,
+        startingReputation: 50,
+        priceModifier: 1.0,
+        caravanRisk: 1.0,
+        loanInterest: 0.1,
+        description: "L'esperienza classica del mercante di Babilonia"
+    },
+    difficile: {
+        name: "🎭 Sopravvivenza",
+        startingGold: 500,
+        startingReputation: 40,
+        priceModifier: 1.2,    // prezzi più alti del 20%
+        caravanRisk: 1.2,      // rischio carovane aumentato del 20%
+        loanInterest: 0.12,    // interessi più alti
+        description: "Per mercanti esperti: meno oro, prezzi alti e più rischi"
+    }
+};
+
+let currentDifficulty = 'normale';
+
+// Aggiungere questa funzione per iniziare una nuova partita
+function startNewGame(difficulty) {
+    const settings = difficultyLevels[difficulty];
+    if (!settings) return;
+    
+    currentDifficulty = difficulty;
+    
+    // Reset game state
+    gameState = {
+        gold: settings.startingGold,
+        level: 1,
+        experience: 0,
+        month: 1,
+        year: 1750,
+        reputation: settings.startingReputation,
+        inventory: {},
+        eventLog: [],
+        caravans: [],
+        isRunning: false,
+        gameInterval: null,
+        warehouseCapacity: 500,
+        currentStorage: 0,
+        loan: 0,
+        buildings: {},
+        statistics: {
+            totalProfit: 0,
+            bestTrade: null,
+            totalCaravans: 0,
+            successfulCaravans: 0
+        }
+    };
+
+    // Update UI
+    document.getElementById('difficulty-select').style.display = 'none';
+    document.querySelectorAll('.game-section').forEach(el => el.style.display = 'block');
+    
+    updateDisplay();
+    addEvent(`🎮 Nuova partita iniziata in modalità ${settings.name}`);
+}
+    </script>
+</body>
+</html>

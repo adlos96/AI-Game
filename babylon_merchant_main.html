@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Mercante di Babilonia</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="game-title">🏛️ Il Mercante di Babilonia 🏛️</h1>
+            <div class="game-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="gold">1000</div>
+                    <div class="stat-label">🪙 Sicli d'Oro</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="month">1</div>
+                    <div class="stat-label">📅 Mese</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="year">1750</div>
+                    <div class="stat-label">🏛️ Anno (a.C.)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="reputation">50</div>
+                    <div class="stat-label">⭐ Reputazione</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="market-section">
+                <h2 class="section-title">🏪 Mercato di Babilonia</h2>
+                <div class="goods-grid" id="market-goods">
+                    <!-- Market goods will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="inventory-section">
+                <h2 class="section-title">📦 Il Tuo Magazzino</h2>
+                <div class="goods-grid" id="inventory-goods">
+                    <!-- Inventory will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="events-section">
+            <h2 class="section-title">📜 Cronache del Regno</h2>
+            <div class="event-log" id="event-log">
+                <div class="event-item">Benvenuto a Babilonia, mercante! La tua avventura commerciale inizia ora...</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <button class="next-month-btn" id="gameControlBtn" onclick="game.toggleGame()">
+                🎮 Avvia il Gioco
+            </button>
+            <div style="margin-top: 10px; color: #8b4513;" id="gameStatus">
+                Gioco in pausa - Clicca per iniziare!
+            </div>
+        </div>
+
+        <div class="events-section">
+            <h2 class="section-title">🐪 Centro Caravane</h2>
+            <div class="caravan-section" id="caravan-section">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div class="caravan-card">
+                        <h3>🏜️ Rotta dell'Assiria</h3>
+                        <p>Distanza: 3 mesi • Rischio: Medio</p>
+                        <p>Domanda alta: Seta, Spezie</p>
+                        <button class="btn btn-buy" onclick="game.sendCaravan('assiria')">Invia Caravana (500 sicli)</button>
+                    </div>
+                    <div class="caravan-card">
+                        <h3>🌊 Rotta Fenicia</h3>
+                        <p>Distanza: 2 mesi • Rischio: Basso</p>
+                        <p>Domanda alta: Cedro, Oro</p>
+                        <button class="btn btn-buy" onclick="game.sendCaravan('fenicia')">Invia Caravana (300 sicli)</button>
+                    </div>
+                    <div class="caravan-card">
+                        <h3>🏔️ Rotta Persiana</h3>
+                        <p>Distanza: 4 mesi • Rischio: Alto</p>
+                        <p>Domanda alta: Incenso, Grano</p>
+                        <button class="btn btn-buy" onclick="game.sendCaravan('persia')">Invia Caravana (800 sicli)</button>
+                    </div>
+                </div>
+                <div class="active-caravans" id="active-caravans" style="margin-top: 20px;">
+                    <h4>📋 Caravane in Viaggio:</h4>
+                    <div id="caravan-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="gameData.js"></script>
+    <script src="gameLogic.js"></script>
+    <script src="ui.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
